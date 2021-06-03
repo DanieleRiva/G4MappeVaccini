@@ -108,6 +108,101 @@ namespace MappeVacciniG4.CLASSES
         public string[] rossa { get; set; }
     }
 
+    // Json Covid
+    //public class RootobjectCovid
+    //{
+    //    public DatiCovid[] data { get; set; }
+    //}
+
+    //public class DatiCovid
+    //{
+    //    public DateTime data { get; set; }
+    //    public string stato { get; set; }
+    //    public int codice_regione { get; set; }
+    //    public string denominazione_regione { get; set; }
+    //    public float lat { get; set; }
+    //    public float _long { get; set; }
+    //    public int ricoverati_con_sintomi { get; set; }
+    //    public int terapia_intensiva { get; set; }
+    //    public int totale_ospedalizzati { get; set; }
+    //    public int isolamento_domiciliare { get; set; }
+    //    public int totale_positivi { get; set; }
+    //    public int variazione_totale_positivi { get; set; }
+    //    public int nuovi_positivi { get; set; }
+    //    public int dimessi_guariti { get; set; }
+    //    public int deceduti { get; set; }
+    //    public object casi_da_sospetto_diagnostico { get; set; }
+    //    public object casi_da_screening { get; set; }
+    //    public int totale_casi { get; set; }
+    //    public int tamponi { get; set; }
+    //    public int casi_testati { get; set; }
+    //    public string note { get; set; }
+    //    public int ingressi_terapia_intensiva { get; set; }
+    //    public object note_test { get; set; }
+    //    public string note_casi { get; set; }
+    //    public int totale_positivi_test_molecolare { get; set; }
+    //    public int totale_positivi_test_antigenico_rapido { get; set; }
+    //    public int tamponi_test_molecolare { get; set; }
+    //    public int tamponi_test_antigenico_rapido { get; set; }
+    //    public string codice_nuts_1 { get; set; }
+    //    public string codice_nuts_2 { get; set; }
+    //}
+
+
+    public class RootobjectCovid
+    {
+        public SchemaCovid schema { get; set; }
+        public DatumCovid[] data { get; set; }
+    }
+
+    public class SchemaCovid
+    {
+        public FieldCovid[] fields { get; set; }
+    }
+
+    public class FieldCovid
+    {
+        public string name { get; set; }
+        public string type { get; set; }
+    }
+
+    public class DatumCovid
+    {
+        public DateTime data { get; set; }
+        public string stato { get; set; }
+        public int codice_regione { get; set; }
+        public string denominazione_regione { get; set; }
+        public float lat { get; set; }
+        public float _long { get; set; }
+        public int ricoverati_con_sintomi { get; set; }
+        public int terapia_intensiva { get; set; }
+        public int totale_ospedalizzati { get; set; }
+        public int isolamento_domiciliare { get; set; }
+        public int totale_positivi { get; set; }
+        public int variazione_totale_positivi { get; set; }
+        public int nuovi_positivi { get; set; }
+        public int dimessi_guariti { get; set; }
+        public int deceduti { get; set; }
+        public object casi_da_sospetto_diagnostico { get; set; }
+        public object casi_da_screening { get; set; }
+        public int totale_casi { get; set; }
+        public int tamponi { get; set; }
+        public int casi_testati { get; set; }
+        public string note { get; set; }
+        public int ingressi_terapia_intensiva { get; set; }
+        public object note_test { get; set; }
+        public string note_casi { get; set; }
+        public int totale_positivi_test_molecolare { get; set; }
+        public int totale_positivi_test_antigenico_rapido { get; set; }
+        public int tamponi_test_molecolare { get; set; }
+        public int tamponi_test_antigenico_rapido { get; set; }
+        public string codice_nuts_1 { get; set; }
+        public string codice_nuts_2 { get; set; }
+    }
+
+
+
+
 
 
     class JsonClass

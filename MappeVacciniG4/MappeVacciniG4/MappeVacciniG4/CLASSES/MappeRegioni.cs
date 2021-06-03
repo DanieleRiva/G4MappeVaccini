@@ -20,25 +20,26 @@ namespace MappeVacciniG4.CLASSES
     public class MappeRegioni
     {
         string[] regions = new string[] { "Piemonte", "Valle d'Aosta", "Lombardia", "Trentino", "Veneto", "Friuli", "Liguria", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna" };
+        public float[] popolazione = { 4356000, 125666, 10060000, 1072000, 4906000, 1215000, 1551000, 4459000, 3730000, 882015, 1525000, 5879000, 1312000, 305617, 5802000, 4029000, 562869, 1947000, 5000000, 1640000 };
         static readonly HttpClient client = new HttpClient();
         static string vacciniSummaryGet = "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/vaccini-summary-latest.json";
         static string restrizioniGet = "https://covid19.zappi.me/coloreRegioni.php";
+        static string covidGet = "https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-regioni-latest.json";
         List<float> listaGradazioni = new List<float>();
-        public float[] popolazione = { 4356000, 125666, 10060000, 1072000, 4906000, 1215000, 1551000, 4459000, 3730000, 882015, 1525000, 5879000, 1312000, 305617, 5802000, 4029000, 562869, 1947000, 5000000, 1640000 };
 
         RootobjectVacciniSummary JsonColors = new RootobjectVacciniSummary();
-        float c = 0;
-
-        string restrizioniDati = string.Empty;
         Restrizioni JsonRestrizioni = new Restrizioni();
+        RootobjectCovid JsonCovid = new RootobjectCovid();
+        float c = 0;
+        string restrizioniDati = string.Empty;
+        string covidDati = string.Empty;
 
-        public async Task<Polygon[]> InitData(bool restrizioni)
+        public async Task<Polygon[]> InitData(int tipologia)
         {
             Rootobject res = new Rootobject();
             float massimo = 0;
             float minimo = 0;
             float salto = 0;
-
             var assembly = IntrospectionExtensions.GetTypeInfo(typeof(EmptyClass)).Assembly;
             Stream stream = assembly.GetManifestResourceStream("MappeVacciniG4.GEOJSON.regioni2.geojson");
 
@@ -53,19 +54,29 @@ namespace MappeVacciniG4.CLASSES
             double valore1 = 0;
             double valore2 = 0;
 
-            if (!restrizioni)
+            if (tipologia == 0)
             {
                 string dati = await client.GetStringAsync(vacciniSummaryGet);
                 JsonColors = JsonConvert.DeserializeObject<RootobjectVacciniSummary>(dati);
             }
-            else
+            else if (tipologia == 1)
+            {
+                string covidDati = "{ \n\"schema\":{\n\"fields\":[\n{\n\"name\":\"data\",\n\"type\":\"datetime\" \n}, \n{ \n\"name\":\"stato\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"codice_regione\", \n\"type\":\"integer\" \n}, \n{ \n\"name\":\"denominazione_regione\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"lat\", \n\"type\":\"float\" \n}, \n{ \n\"name\":\"long\", \n\"type\":\"float\" \n}, \n{ \n\"name\":\"ricoverati_con_sintomi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"terapia_intensiva\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"totale_ospedalizzati\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"isolamento_domiciliare\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"totale_positivi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"variazione_totale_positivi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"nuovi_positivi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"dimessi_guariti\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"deceduti\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"casi_da_sospetto_diagnostico\", \n\"type\":\"object\" \n}, \n{ \n\"name\":\"casi_da_screening\", \n\"type\":\"object\" \n}, \n{ \n\"name\":\"totale_casi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"tamponi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"casi_testati\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"note\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"ingressi_terapia_intensiva\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"note_test\", \n\"type\":\"object\" }, \n{ \n\"name\":\"note_casi\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"totale_positivi_test_molecolare\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"totale_positivi_test_antigenico_rapido\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"tamponi_test_molecolare\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"tamponi_test_antigenico_rapido\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"codice_nuts_1\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"codice_nuts_2\", \n\"type\":\"string\" \n}, \n], \n}, \n\"data\":";
+                covidDati += await client.GetStringAsync(covidGet);
+                covidDati += "}";
+                Debug.WriteLine(covidDati);
+                JsonCovid = JsonConvert.DeserializeObject<RootobjectCovid>(covidDati);
+            }
+            else if (tipologia == 2)
             {
                 restrizioniDati = await client.GetStringAsync(restrizioniGet);
                 JsonRestrizioni = JsonConvert.DeserializeObject<Restrizioni>(restrizioniDati);
             }
 
-            if (!restrizioni) // Find Maximum and minimum persentage of vaccines
+            if (tipologia == 0) // Find Maximum and minimum persentage of vaccines
             {
+                listaGradazioni.Clear();
+
                 for (int i = 0; i < 20; i++)
                 {
                     int coloreTrentino = 0;
@@ -100,6 +111,53 @@ namespace MappeVacciniG4.CLASSES
                     salto /= 14;
                 }
             }
+            else if (tipologia == 1) // Find Maximum and minimum persentage of covid
+            {
+                listaGradazioni.Clear();
+
+                for (int i = 0; i < 20; i++)
+                {
+                    int coloreTrentino = 0;
+
+                    foreach (var region in JsonCovid.data)
+                    {
+                        if (i == 5 && region.denominazione_regione == "Friuli Venezia Giulia")
+                        {
+
+                        }
+
+                        if (region.denominazione_regione == res.features[i].properties.reg_name || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && region.codice_regione == 2 || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && region.codice_regione == 21 || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && region.codice_regione == 22 || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && region.denominazione_regione == "Friuli Venezia Giulia")
+                        {
+                            if (region.codice_regione == 21)
+                            {
+                                coloreTrentino += region.totale_positivi;
+                            }
+                            else if (region.codice_regione == 22)
+                            {
+                                coloreTrentino += region.totale_positivi;
+                                c = (coloreTrentino / (popolazione[i])) * 100;
+                                listaGradazioni.Add(c);
+                                Debug.WriteLine($"Aggiunto dato della regione {region.denominazione_regione}");
+                            }
+                            else
+                            {
+                                c = (region.totale_positivi / (popolazione[i])) * 100;
+                                listaGradazioni.Add(c);
+                                Debug.WriteLine($"Aggiunto dato della regione {region.denominazione_regione}");
+                            }
+
+                            if (c > massimo)
+                                massimo = c;
+
+                            if (c < minimo || region.denominazione_regione == "Piemonte")
+                                minimo = c;
+                        }
+                    }
+
+                    salto = massimo - minimo;
+                    salto /= 14;
+                }
+            }
 
             for (int i = 0; i < 20; i++) // Create polygons scrolling throught regions
             {
@@ -107,14 +165,14 @@ namespace MappeVacciniG4.CLASSES
                 polygon.StrokeWidth = 5;
                 polygon.StrokeColor = Color.DarkSlateGray;
 
-                if (!restrizioni)
+                if (tipologia == 0)
                     foreach (var region in JsonColors.data) // Colors based on vaccines
                     {
                         if (region.nome_area == res.features[i].properties.reg_name || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && region.index == 19 || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && region.index == 11 || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && region.index == 12)
                         {
                             if (region.index != 11)
                             {
-                                c = listaGradazioni.ElementAt(i); // Take vaine persentage of current region from the list
+                                c = listaGradazioni.ElementAt(i); // Take persentage of current region from the list
 
                                 if (c < minimo + salto)
                                     polygon.FillColor = Color.FromHex("#243B6EFF"); // 14%
@@ -147,6 +205,48 @@ namespace MappeVacciniG4.CLASSES
                             }
                         }
                     }
+                else if (tipologia == 1)
+                {
+                    foreach (var region in JsonCovid.data) // Colors based on vaccines
+                    {
+                        if (region.denominazione_regione == res.features[i].properties.reg_name || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && region.codice_regione == 2 || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && region.codice_regione == 21 || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && region.codice_regione == 22 || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && region.denominazione_regione == "Friuli Venezia Giulia")
+                        {
+                            if (region.codice_regione != 21)
+                            {
+                                c = listaGradazioni.ElementAt(i); // Take vaine persentage of current region from the list
+
+                                if (c < minimo + salto)
+                                    polygon.FillColor = Color.FromHex("#24FF1500"); // 14%
+                                else if (c < minimo + (2 * salto))
+                                    polygon.FillColor = Color.FromHex("#26FF1500"); // 15%
+                                else if (c < minimo + (3 * salto))
+                                    polygon.FillColor = Color.FromHex("#33FF1500"); // 20%
+                                else if (c < minimo + (4 * salto))
+                                    polygon.FillColor = Color.FromHex("#40FF1500"); // 25%
+                                else if (c < minimo + (5 * salto))
+                                    polygon.FillColor = Color.FromHex("#4DFF1500"); // 30%
+                                else if (c < minimo + (6 * salto))
+                                    polygon.FillColor = Color.FromHex("#59FF1500"); // 35%
+                                else if (c < minimo + (7 * salto))
+                                    polygon.FillColor = Color.FromHex("#4DFF1500"); // 40%
+                                else if (c < minimo + (8 * salto))
+                                    polygon.FillColor = Color.FromHex("#4DFF1500"); // 45%
+                                else if (c < minimo + (9 * salto))
+                                    polygon.FillColor = Color.FromHex("#80FF1500"); // 50%
+                                else if (c < minimo + (10 * salto))
+                                    polygon.FillColor = Color.FromHex("#8CFF1500"); // 55%
+                                else if (c < minimo + (11 * salto))
+                                    polygon.FillColor = Color.FromHex("#99FF1500"); // 60%
+                                else if (c < minimo + (12 * salto))
+                                    polygon.FillColor = Color.FromHex("#A6FF1500"); // 65%
+                                else if (c < minimo + (13 * salto))
+                                    polygon.FillColor = Color.FromHex("#B3FF1500"); // 70%
+                                else
+                                    polygon.FillColor = Color.FromHex("#BFFF1500"); // 75%
+                            }
+                        }
+                    }
+                }
                 else // Colors based on restrictions
                 {
                     if (JsonRestrizioni.bianca != null)
@@ -200,12 +300,18 @@ namespace MappeVacciniG4.CLASSES
 
                 regionsPoly[i] = polygon;
 
+                // For debug
+                if (tipologia == 1 && i == 18)
+                {
+
+                }
+
             }
 
             return regionsPoly;
         }
 
-        public async Task<List<Pin>> GetRegionsPins(bool restrizioni)
+        public async Task<List<Pin>> GetRegionsPins(bool restrizioni) // ANCORA DA METTERE MODALITA' COVID-19 (AL MOMENTO SOLO VACCINI)
         {
             int trenitinoVacc = 0;
 
