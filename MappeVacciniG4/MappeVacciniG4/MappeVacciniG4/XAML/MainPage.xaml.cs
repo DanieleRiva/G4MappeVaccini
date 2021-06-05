@@ -36,10 +36,15 @@ namespace MappeVacciniG4
         bool vaccinesLoaded = false;
         bool covidLoaded = false;
         bool restrictionsLoaded = false;
+        bool changedByError = false;
+
+        public Location location;
 
         public MainPage()
         {
             InitializeComponent();
+
+            OnStartupGps();
 
             Position initPos = new Position(41.90261250766303, 12.496868574122308); // Set initial zoom level
             Map.MoveToRegion(new MapSpan(initPos, 13, 13));
@@ -57,21 +62,33 @@ namespace MappeVacciniG4
                 restrictionsPinRegions.ForEach(pin => Map.Pins.Add(pin));
             else
                 foreach (var pin in Map.Pins.ToList())
-                    if (regions.Contains(pin.Label))
+                    if (regions.Contains(pin.Label) || pin.Label == "Friuli Venezia Giulia" || pin.Label == "Valle d'Aosta")
                         Map.Pins.Remove(pin);
         }
 
         private async void OnPointsToggled(object sender, ToggledEventArgs e)
         {
+            changedByError = false;
+
             if (CentriSwitch.IsToggled && !pinSwitched)
             {
                 LoadingRing.IsRunning = true;
                 CentriSwitch.IsEnabled = false;
-                pinSwitched = true;
 
                 pinSomministrazione = await MappaPins.GetPinData();
 
-                pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
+                if (pinSomministrazione == null)
+                {
+                    await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
+                    CentriSwitch.IsToggled = false;
+                    changedByError = true;
+                }
+                else
+                {
+                    pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
+                    pinSwitched = true;
+                }
+
                 CentriSwitch.IsEnabled = true;
             }
             else if (CentriSwitch.IsToggled && pinSwitched) // Prevents from loading more than once
@@ -84,13 +101,11 @@ namespace MappeVacciniG4
 
                 pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
             }
-            else
+            else if (!changedByError)
             {
                 foreach (var pin in Map.Pins.ToList())
                     if (!regions.Contains(pin.Label))
                         Map.Pins.Remove(pin);
-
-                covidPinRegions.ForEach(pin => Map.Pins.Add(pin));
             }
 
             LoadingRing.IsRunning = false;
@@ -116,10 +131,12 @@ namespace MappeVacciniG4
 
         private async void OnRegions(object sender, EventArgs e)
         {
+            //LoadingStackLayout.IsVisible = true;
+
             Map.MapElements.Clear();
             Map.Pins.Clear();
 
-            if (sender == null || ((Button)sender).Text == "Vaccini" && !vaccinesLoaded)
+            if (sender == null || ((Button)sender).Text == "Vaccini" && !vaccinesLoaded && LoadingStackLayout.IsVisible == true)
             {
                 vaccinesPolygons = await MappeRegioni.InitData(0);
                 vaccinesPinsRegions = await MappeRegioni.GetRegionsPins(0);
@@ -135,8 +152,10 @@ namespace MappeVacciniG4
                     OnRegionsPinsToggled(null, null);
 
                 vaccinesLoaded = true;
+
+                CentersStakPanel.IsVisible = true;
             }
-            else if (((Button)sender).Text == "Vaccini" && vaccinesLoaded)
+            else if (((Button)sender).Text == "Vaccini" && vaccinesLoaded && LoadingStackLayout.IsVisible == true)
             {
                 foreach (var poly in vaccinesPolygons)
                     Map.MapElements.Add(poly);
@@ -147,8 +166,10 @@ namespace MappeVacciniG4
 
                 if (PinSwitch.IsToggled)
                     OnRegionsPinsToggled(null, null);
+
+                CentersStakPanel.IsVisible = true;
             }
-            else if (((Button)sender).Text == "Covid-19" && !covidLoaded) // Clicked Covid-19
+            else if (((Button)sender).Text == "Covid-19" && !covidLoaded && LoadingStackLayout.IsVisible == true) // Clicked Covid-19
             {
                 covidPolygons = await MappeRegioni.InitData(1);
                 covidPinRegions = await MappeRegioni.GetRegionsPins(1);
@@ -164,8 +185,12 @@ namespace MappeVacciniG4
                     OnRegionsPinsToggled(null, null);
 
                 covidLoaded = true;
+
+                CentersStakPanel.IsVisible = false;
+
+                LoadingStackLayout.IsVisible = false;
             }
-            else if (((Button)sender).Text == "Covid-19" && covidLoaded)
+            else if (((Button)sender).Text == "Covid-19" && covidLoaded && LoadingStackLayout.IsVisible == true)
             {
                 foreach (var poly in covidPolygons)
                     Map.MapElements.Add(poly);
@@ -176,8 +201,10 @@ namespace MappeVacciniG4
 
                 if (PinSwitch.IsToggled)
                     OnRegionsPinsToggled(null, null);
+
+                CentersStakPanel.IsVisible = false;
             }
-            else if (((Button)sender).Text == "Restrizioni" && !restrictionsLoaded) // Clicked restrictions
+            else if (((Button)sender).Text == "Restrizioni" && !restrictionsLoaded && LoadingStackLayout.IsVisible == true) // Clicked restrictions
             {
                 retrictionsPolygons = await MappeRegioni.InitData(2);
                 restrictionsPinRegions = await MappeRegioni.GetRegionsPins(2);
@@ -194,7 +221,7 @@ namespace MappeVacciniG4
 
                 restrictionsLoaded = true;
             }
-            else if (((Button)sender).Text == "Restrizioni" && restrictionsLoaded)
+            else if (((Button)sender).Text == "Restrizioni" && restrictionsLoaded && LoadingStackLayout.IsVisible == true)
             {
                 foreach (var poly in retrictionsPolygons)
                     Map.MapElements.Add(poly);
@@ -205,6 +232,31 @@ namespace MappeVacciniG4
 
                 if (PinSwitch.IsToggled)
                     OnRegionsPinsToggled(null, null);
+
+                CentersStakPanel.IsVisible = false;
+            }
+
+            //LoadingStackLayout.IsVisible = false;
+        }
+
+        private async void OnStartupGps()
+        {
+            try
+            {
+                location = await Geolocation.GetLastKnownLocationAsync();
+
+                if (location == null)
+                {
+                    var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
+                    location = await Geolocation.GetLocationAsync(request);
+
+                    if (location == null)
+                        await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
+                }
+            }
+            catch (Exception)
+            {
+                await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
             }
         }
 

@@ -16,7 +16,7 @@
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
 
-        <maps:Map x:Name="Map"  IsVisible="true" Grid.ColumnSpan="2" Grid.RowSpan="3" IsShowingUser="True" MapType="Street" x:FieldModifier="public">
+        <maps:Map x:Name="Map" IsVisible="true" Grid.ColumnSpan="2" Grid.RowSpan="3" IsShowingUser="True" MapType="Street" x:FieldModifier="public">
 
         </maps:Map>
 
@@ -73,7 +73,7 @@
                 <Switch x:Name="PinSwitch" HorizontalOptions="Center" IsToggled="True" OnColor="Green" ThumbColor="White" Toggled="OnRegionsPinsToggled"/>
             </StackLayout>
 
-            <StackLayout Orientation="Vertical">
+            <StackLayout Orientation="Vertical" x:Name="CentersStakPanel">
                 <Image Source="HospitalIcon.png" WidthRequest="30" HeightRequest="30" />
                 <Switch x:Name="CentriSwitch" HorizontalOptions="Center" IsToggled="False" OnColor="Green" ThumbColor="White" Toggled="OnPointsToggled"/>
             </StackLayout>
@@ -86,7 +86,7 @@
         </StackLayout>
 
         <StackLayout x:Name="InfoStackLayout" Grid.Row="0" Grid.Column="0" BackgroundColor="White" IsVisible="false" Grid.ColumnSpan="2" 
-                     Grid.RowSpan="3" Orientation="Vertical">
+                     Grid.RowSpan="3" Orientation="Vertical" x:FieldModifier="public">
 
             <Label Text="MAPPE VACCINI" TextColor="Red" HorizontalOptions="Center" FontSize="30" TextDecorations="Underline" Margin="0, 10, 0, 0"/>
 
@@ -110,7 +110,17 @@
 
         </StackLayout>
 
-        <ActivityIndicator x:Name="LoadingRing" Color="Red" IsRunning="False" IsVisible="true" 
+        <StackLayout x:Name="LoadingStackLayout" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" IsVisible="false" Grid.ColumnSpan="2" 
+                     Grid.RowSpan="3" Orientation="Vertical" x:FieldModifier="public">
+
+            <ListView x:Name="ListView2"/>
+            
+            <Label Text="CARICAMENTO" TextColor="Red" FontAttributes="Bold" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Black"
+                   Margin="0, 0, 0, 0"/>
+
+        </StackLayout>
+
+            <ActivityIndicator x:Name="LoadingRing" Color="Red" IsRunning="False" IsVisible="true" 
                            Grid.Row="2" Grid.Column="0" 
                            WidthRequest="100" HeightRequest="100"
                            VerticalOptions="End" Margin="0, 0, 0, 35"/>
