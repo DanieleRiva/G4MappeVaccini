@@ -17,6 +17,8 @@ namespace MappeVacciniG4
     // 2 = restrizioni
     public partial class MainPage : ContentPage
     {
+        string[] regions = new string[] { "Piemonte", "Valle d'Aosta / Vallée d'Aoste", "Lombardia", "Trentino Alto Adige", "Veneto", "Friuli-Venezia Giulia", "Liguria", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna" };
+
         MappeRegioni MappeRegioni = new MappeRegioni();
         List<Pin> vaccinesPinsRegions = new List<Pin>();
         List<Pin> covidPinRegions = new List<Pin>();
@@ -39,6 +41,9 @@ namespace MappeVacciniG4
         {
             InitializeComponent();
 
+            Position initPos = new Position(41.90261250766303, 12.496868574122308); // Set initial zoom level
+            Map.MoveToRegion(new MapSpan(initPos, 13, 13));
+
             OnRegions(null, null); // Load regions when launching app
         }
 
@@ -51,36 +56,42 @@ namespace MappeVacciniG4
             else if (PinSwitch.IsToggled && RestrizioniButton.TextColor == Color.Red)
                 restrictionsPinRegions.ForEach(pin => Map.Pins.Add(pin));
             else
-                Map.Pins.Clear();
+                foreach (var pin in Map.Pins.ToList())
+                    if (regions.Contains(pin.Label))
+                        Map.Pins.Remove(pin);
         }
 
         private async void OnPointsToggled(object sender, ToggledEventArgs e)
         {
-            if (PinSwitch.IsToggled && !pinSwitched)
+            if (CentriSwitch.IsToggled && !pinSwitched)
             {
                 LoadingRing.IsRunning = true;
-                PinSwitch.IsEnabled = false;
+                CentriSwitch.IsEnabled = false;
                 pinSwitched = true;
 
                 pinSomministrazione = await MappaPins.GetPinData();
 
-                Map.Pins.Clear();
-
                 pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
-                PinSwitch.IsEnabled = true;
+                CentriSwitch.IsEnabled = true;
             }
-            else if (PinSwitch.IsToggled && pinSwitched) // Prevents from loading more than once
+            else if (CentriSwitch.IsToggled && pinSwitched) // Prevents from loading more than once
             {
                 LoadingRing.IsRunning = true;
-                Map.Pins.Clear();
+
+                foreach (var pin in Map.Pins.ToList())
+                    if (!regions.Contains(pin.Label))
+                        Map.Pins.Remove(pin);
+
                 pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
             }
             else
             {
-                Map.Pins.Clear();
+                foreach (var pin in Map.Pins.ToList())
+                    if (!regions.Contains(pin.Label))
+                        Map.Pins.Remove(pin);
+
                 covidPinRegions.ForEach(pin => Map.Pins.Add(pin));
             }
-
 
             LoadingRing.IsRunning = false;
         }
