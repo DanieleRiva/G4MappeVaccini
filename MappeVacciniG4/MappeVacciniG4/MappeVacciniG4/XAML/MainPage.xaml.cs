@@ -131,7 +131,7 @@ namespace MappeVacciniG4
 
         private async void OnRegions(object sender, EventArgs e)
         {
-            //LoadingStackLayout.IsVisible = true;
+            LoadingStackLayout.IsVisible = true;
 
             Map.MapElements.Clear();
             Map.Pins.Clear();
@@ -187,8 +187,6 @@ namespace MappeVacciniG4
                 covidLoaded = true;
 
                 CentersStakPanel.IsVisible = false;
-
-                LoadingStackLayout.IsVisible = false;
             }
             else if (((Button)sender).Text == "Covid-19" && covidLoaded && LoadingStackLayout.IsVisible == true)
             {
@@ -220,6 +218,7 @@ namespace MappeVacciniG4
                     OnRegionsPinsToggled(null, null);
 
                 restrictionsLoaded = true;
+                CentersStakPanel.IsVisible = false;
             }
             else if (((Button)sender).Text == "Restrizioni" && restrictionsLoaded && LoadingStackLayout.IsVisible == true)
             {
@@ -236,7 +235,7 @@ namespace MappeVacciniG4
                 CentersStakPanel.IsVisible = false;
             }
 
-            //LoadingStackLayout.IsVisible = false;
+            LoadingStackLayout.IsVisible = false;
         }
 
         private async void OnStartupGps()
