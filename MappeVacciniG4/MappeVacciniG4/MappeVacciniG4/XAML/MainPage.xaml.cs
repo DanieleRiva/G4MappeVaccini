@@ -18,9 +18,9 @@ namespace MappeVacciniG4
     public partial class MainPage : ContentPage
     {
         MappeRegioni MappeRegioni = new MappeRegioni();
-        List<Pin> vaccinesPin = new List<Pin>();
-        List<Pin> covidPin = new List<Pin>();
-        List<Pin> restrictionsPin = new List<Pin>();
+        List<Pin> vaccinesPinsRegions = new List<Pin>();
+        List<Pin> covidPinRegions = new List<Pin>();
+        List<Pin> restrictionsPinRegions = new List<Pin>();
         //MappeProvince MappeProvince = new MappeProvince();
         MapPins MappaPins = new MapPins();
 
@@ -39,10 +39,22 @@ namespace MappeVacciniG4
         {
             InitializeComponent();
 
-            OnRegions(null , null); // Load regions when launching app
+            OnRegions(null, null); // Load regions when launching app
         }
 
-        private async void OnPinsToggled(object sender, ToggledEventArgs e)
+        private void OnRegionsPinsToggled(object sender, ToggledEventArgs e)
+        {
+            if (PinSwitch.IsToggled && VacciniButton.TextColor == Color.Red)
+                vaccinesPinsRegions.ForEach(pin => Map.Pins.Add(pin));
+            else if (PinSwitch.IsToggled && CovidButton.TextColor == Color.Red)
+                covidPinRegions.ForEach(pin => Map.Pins.Add(pin));
+            else if (PinSwitch.IsToggled && RestrizioniButton.TextColor == Color.Red)
+                restrictionsPinRegions.ForEach(pin => Map.Pins.Add(pin));
+            else
+                Map.Pins.Clear();
+        }
+
+        private async void OnPointsToggled(object sender, ToggledEventArgs e)
         {
             if (PinSwitch.IsToggled && !pinSwitched)
             {
@@ -66,9 +78,9 @@ namespace MappeVacciniG4
             else
             {
                 Map.Pins.Clear();
-                covidPin.ForEach(pin => Map.Pins.Add(pin));
+                covidPinRegions.ForEach(pin => Map.Pins.Add(pin));
             }
-                
+
 
             LoadingRing.IsRunning = false;
         }
@@ -99,16 +111,17 @@ namespace MappeVacciniG4
             if (sender == null || ((Button)sender).Text == "Vaccini" && !vaccinesLoaded)
             {
                 vaccinesPolygons = await MappeRegioni.InitData(0);
-                vaccinesPin = await MappeRegioni.GetRegionsPins(false);
+                vaccinesPinsRegions = await MappeRegioni.GetRegionsPins(0);
 
                 foreach (var poly in vaccinesPolygons)
                     Map.MapElements.Add(poly);
 
-                vaccinesPin.ForEach(pin => Map.Pins.Add(pin));
-
-                VacciniButton.TextColor = Color.Red;                
+                VacciniButton.TextColor = Color.Red;
                 RestrizioniButton.TextColor = Color.Black;
                 CovidButton.TextColor = Color.Black;
+
+                if (PinSwitch.IsToggled)
+                    OnRegionsPinsToggled(null, null);
 
                 vaccinesLoaded = true;
             }
@@ -117,25 +130,27 @@ namespace MappeVacciniG4
                 foreach (var poly in vaccinesPolygons)
                     Map.MapElements.Add(poly);
 
-                vaccinesPin.ForEach(pin => Map.Pins.Add(pin));
-
                 VacciniButton.TextColor = Color.Red;
                 RestrizioniButton.TextColor = Color.Black;
                 CovidButton.TextColor = Color.Black;
+
+                if (PinSwitch.IsToggled)
+                    OnRegionsPinsToggled(null, null);
             }
             else if (((Button)sender).Text == "Covid-19" && !covidLoaded) // Clicked Covid-19
             {
                 covidPolygons = await MappeRegioni.InitData(1);
-                covidPin = await MappeRegioni.GetRegionsPins(false);
+                covidPinRegions = await MappeRegioni.GetRegionsPins(1);
 
                 foreach (var poly in covidPolygons)
                     Map.MapElements.Add(poly);
 
-                covidPin.ForEach(pin => Map.Pins.Add(pin));
-
                 VacciniButton.TextColor = Color.Black;
                 RestrizioniButton.TextColor = Color.Black;
                 CovidButton.TextColor = Color.Red;
+
+                if (PinSwitch.IsToggled)
+                    OnRegionsPinsToggled(null, null);
 
                 covidLoaded = true;
             }
@@ -144,25 +159,27 @@ namespace MappeVacciniG4
                 foreach (var poly in covidPolygons)
                     Map.MapElements.Add(poly);
 
-                covidPin.ForEach(pin => Map.Pins.Add(pin));
-
                 VacciniButton.TextColor = Color.Black;
                 RestrizioniButton.TextColor = Color.Black;
                 CovidButton.TextColor = Color.Red;
+
+                if (PinSwitch.IsToggled)
+                    OnRegionsPinsToggled(null, null);
             }
             else if (((Button)sender).Text == "Restrizioni" && !restrictionsLoaded) // Clicked restrictions
             {
                 retrictionsPolygons = await MappeRegioni.InitData(2);
-                restrictionsPin = await MappeRegioni.GetRegionsPins(true);
+                restrictionsPinRegions = await MappeRegioni.GetRegionsPins(2);
 
                 foreach (var poly in retrictionsPolygons)
                     Map.MapElements.Add(poly);
 
-                restrictionsPin.ForEach(pin => Map.Pins.Add(pin));
-
                 VacciniButton.TextColor = Color.Black;
                 RestrizioniButton.TextColor = Color.Red;
                 CovidButton.TextColor = Color.Black;
+
+                if (PinSwitch.IsToggled)
+                    OnRegionsPinsToggled(null, null);
 
                 restrictionsLoaded = true;
             }
@@ -171,11 +188,12 @@ namespace MappeVacciniG4
                 foreach (var poly in retrictionsPolygons)
                     Map.MapElements.Add(poly);
 
-                restrictionsPin.ForEach(pin => Map.Pins.Add(pin));
-
                 VacciniButton.TextColor = Color.Black;
                 RestrizioniButton.TextColor = Color.Red;
                 CovidButton.TextColor = Color.Black;
+
+                if (PinSwitch.IsToggled)
+                    OnRegionsPinsToggled(null, null);
             }
         }
 

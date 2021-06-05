@@ -69,7 +69,7 @@
         <StackLayout Grid.Column="0" Grid.Row="1" Orientation="Vertical" Margin="0, 10, 0, 0">
             <StackLayout Orientation="Vertical">
                 <Image Source="mapsPin" WidthRequest="30" HeightRequest="30" />
-                <Switch x:Name="PinSwitch" HorizontalOptions="Center" OnColor="Green" ThumbColor="White" Toggled="OnPinsToggled"/>
+                <Switch x:Name="PinSwitch" HorizontalOptions="Center" IsToggled="True" OnColor="Green" ThumbColor="White" Toggled="OnRegionsPinsToggled"/>
             </StackLayout>
             <StackLayout Orientation="Vertical">
                 <Image Source="mapSatellite" WidthRequest="30" HeightRequest="30" />

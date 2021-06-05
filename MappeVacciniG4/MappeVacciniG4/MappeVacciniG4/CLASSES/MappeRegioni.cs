@@ -299,63 +299,102 @@ namespace MappeVacciniG4.CLASSES
                 }
 
                 regionsPoly[i] = polygon;
-
-                // For debug
-                if (tipologia == 1 && i == 18)
-                {
-
-                }
-
             }
 
             return regionsPoly;
         }
 
-        public async Task<List<Pin>> GetRegionsPins(bool restrizioni) // ANCORA DA METTERE MODALITA' COVID-19 (AL MOMENTO SOLO VACCINI)
+        public async Task<List<Pin>> GetRegionsPins(int tipologia) // ANCORA DA METTERE MODALITA' COVID-19 (AL MOMENTO SOLO VACCINI)
         {
             int trenitinoVacc = 0;
+            int trentinoPositivi = 0;
 
             List<Pin> pins = new List<Pin>();
             Pin pin = new Pin();
 
-            string dati = await client.GetStringAsync(vacciniSummaryGet);
-            RootobjectVacciniSummary Json = JsonConvert.DeserializeObject<RootobjectVacciniSummary>(dati);
-
-            foreach (var data in Json.data)
+            if (tipologia == 0)
             {
-                pin = new Pin();
-
-                if (data.index == 11)
-                    trenitinoVacc += data.dosi_somministrate;
-                else if (data.index == 12)
-                {
-                    trenitinoVacc += data.dosi_somministrate;
-
-                    var locations = await Geocoding.GetLocationsAsync("Trentino Alto Adige");
-                    var location = locations.FirstOrDefault();
-
-                    pin.Label = "Trentino Alto Adige";
-                    if (!restrizioni)
-                        pin.Address = $"{trenitinoVacc} somministrati.";
-                    pin.Position = new Position(location.Latitude, location.Longitude);
-                    pin.Type = PinType.Place;
-
-                    pins.Add(pin);
-                }
-                else
-                {
-                    var locations = await Geocoding.GetLocationsAsync(data.nome_area + " " + data.nome_area);
-                    var location = locations.FirstOrDefault();
-
-                    pin.Label = data.nome_area;
-                    if (!restrizioni)
-                        pin.Address = $"{data.dosi_somministrate} somministrati.";
-                    pin.Position = new Position(location.Latitude, location.Longitude);
-                    pin.Type = PinType.Place;
-
-                    pins.Add(pin);
-                }
+                string dati = await client.GetStringAsync(vacciniSummaryGet);
+                JsonColors = JsonConvert.DeserializeObject<RootobjectVacciniSummary>(dati);
             }
+            else if (tipologia == 1)
+            {
+                string covidDati = "{ \n\"schema\":{\n\"fields\":[\n{\n\"name\":\"data\",\n\"type\":\"datetime\" \n}, \n{ \n\"name\":\"stato\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"codice_regione\", \n\"type\":\"integer\" \n}, \n{ \n\"name\":\"denominazione_regione\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"lat\", \n\"type\":\"float\" \n}, \n{ \n\"name\":\"long\", \n\"type\":\"float\" \n}, \n{ \n\"name\":\"ricoverati_con_sintomi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"terapia_intensiva\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"totale_ospedalizzati\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"isolamento_domiciliare\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"totale_positivi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"variazione_totale_positivi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"nuovi_positivi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"dimessi_guariti\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"deceduti\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"casi_da_sospetto_diagnostico\", \n\"type\":\"object\" \n}, \n{ \n\"name\":\"casi_da_screening\", \n\"type\":\"object\" \n}, \n{ \n\"name\":\"totale_casi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"tamponi\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"casi_testati\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"note\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"ingressi_terapia_intensiva\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"note_test\", \n\"type\":\"object\" }, \n{ \n\"name\":\"note_casi\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"totale_positivi_test_molecolare\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"totale_positivi_test_antigenico_rapido\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"tamponi_test_molecolare\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"tamponi_test_antigenico_rapido\", \n\"type\":\"int\" \n}, \n{ \n\"name\":\"codice_nuts_1\", \n\"type\":\"string\" \n}, \n{ \n\"name\":\"codice_nuts_2\", \n\"type\":\"string\" \n}, \n], \n}, \n\"data\":";
+                covidDati += await client.GetStringAsync(covidGet);
+                covidDati += "}";
+                JsonCovid = JsonConvert.DeserializeObject<RootobjectCovid>(covidDati);
+            }
+
+            if (tipologia == 0 || tipologia == 2) // Pins for vaccines
+                foreach (var data in JsonColors.data)
+                {
+                    pin = new Pin();
+
+                    if (data.index == 11)
+                        trenitinoVacc += data.dosi_somministrate;
+                    else if (data.index == 12)
+                    {
+                        trenitinoVacc += data.dosi_somministrate;
+
+                        var locations = await Geocoding.GetLocationsAsync("Trentino Alto Adige");
+                        var location = locations.FirstOrDefault();
+
+                        pin.Label = "Trentino Alto Adige";
+                        if (tipologia == 0)
+                            pin.Address = $"{trenitinoVacc} somministrati.";
+                        pin.Position = new Position(location.Latitude, location.Longitude);
+                        pin.Type = PinType.Place;
+
+                        pins.Add(pin);
+                    }
+                    else
+                    {
+                        var locations = await Geocoding.GetLocationsAsync(data.nome_area + " " + data.nome_area);
+                        var location = locations.FirstOrDefault();
+
+                        pin.Label = data.nome_area;
+                        if (tipologia == 0)
+                            pin.Address = $"{data.dosi_somministrate} somministrati.";
+                        pin.Position = new Position(location.Latitude, location.Longitude);
+                        pin.Type = PinType.Place;
+
+                        pins.Add(pin);
+                    }
+                }
+            else if (tipologia == 1) // Pins for covid
+                foreach (var data in JsonCovid.data)
+                {
+                    pin = new Pin();
+
+                    if (data.codice_regione == 21)
+                        trentinoPositivi += data.totale_positivi;
+                    else if (data.codice_regione == 22)
+                    {
+                        trentinoPositivi += data.totale_positivi;
+
+                        var locations = await Geocoding.GetLocationsAsync("Trentino Alto Adige");
+                        var location = locations.FirstOrDefault();
+
+                        pin.Label = "Trentino Alto Adige";
+                        pin.Address = $"{trentinoPositivi} positivi.";
+                        pin.Position = new Position(location.Latitude, location.Longitude);
+                        pin.Type = PinType.Place;
+
+                        pins.Add(pin);
+                    }
+                    else
+                    {
+                        var locations = await Geocoding.GetLocationsAsync(data.denominazione_regione + " " + data.denominazione_regione);
+                        var location = locations.FirstOrDefault();
+
+                        pin.Label = data.denominazione_regione;
+                        pin.Address = $"{data.totale_positivi} positivi.";
+                        pin.Position = new Position(location.Latitude, location.Longitude);
+                        pin.Type = PinType.Place;
+
+                        pins.Add(pin);
+                    }
+                }
 
             return pins;
         }
