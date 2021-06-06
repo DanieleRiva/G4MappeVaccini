@@ -67,50 +67,112 @@
         </ScrollView>
 
         <StackLayout Grid.Column="0" Grid.Row="1" Orientation="Vertical" Margin="0, 10, 0, 0">
-            
-            <StackLayout Orientation="Vertical">
+
+            <ImageButton x:Name="buttonToolbar" Source="downArrow.png" BackgroundColor="Transparent" HeightRequest="50" Clicked="OnOpenToolbar"/>
+
+            <StackLayout x:Name="PinStackLayout" Orientation="Vertical" IsVisible="false">
                 <Image Source="mapsPin" WidthRequest="30" HeightRequest="30" />
                 <Switch x:Name="PinSwitch" HorizontalOptions="Center" IsToggled="True" OnColor="Green" ThumbColor="White" Toggled="OnRegionsPinsToggled"/>
             </StackLayout>
 
-            <StackLayout Orientation="Vertical" x:Name="CentersStakPanel">
+            <StackLayout x:Name="CentersStakPanel" Orientation="Vertical" IsVisible="false">
                 <Image Source="HospitalIcon.png" WidthRequest="30" HeightRequest="30" />
                 <Switch x:Name="CentriSwitch" HorizontalOptions="Center" IsToggled="False" OnColor="Green" ThumbColor="White" Toggled="OnPointsToggled"/>
             </StackLayout>
 
-            <StackLayout Orientation="Vertical">
+            <StackLayout x:Name="SatelliteStackLayout" Orientation="Vertical" IsVisible="false">
                 <Image Source="mapSatellite" WidthRequest="30" HeightRequest="30" />
                 <Switch HorizontalOptions="Center" OnColor="Green" ThumbColor="White" Toggled="OnSatelliteToggle"/>
             </StackLayout>
-            
+
+            <!--<StackLayout Orientation="Vertical">
+                <Label Text="+" TextColor="Black" Margin="25, 0, 0, 0"/>
+                <Image Source="BlueGradient.png" Rotation="-90" Margin="0, 10, 0, 10"/>
+                <Label Text="-" TextColor="Black" Margin="28, 0, 0, 0"/>
+            </StackLayout>-->
+
         </StackLayout>
 
         <StackLayout x:Name="InfoStackLayout" Grid.Row="0" Grid.Column="0" BackgroundColor="White" IsVisible="false" Grid.ColumnSpan="2" 
                      Grid.RowSpan="3" Orientation="Vertical" x:FieldModifier="public">
 
-            <Label Text="MAPPE VACCINI" TextColor="Red" HorizontalOptions="Center" FontSize="30" TextDecorations="Underline" Margin="0, 10, 0, 0"/>
+            <ScrollView>
+                <StackLayout>
 
-            <Label x:Name="Legend" TextColor="Black" Margin="10, 0, 0, 0" >
-                Legenda
-                
-                Vaccini:
-                Colore 1
-                Colore 2
-                Colore 3
-                
-                Covid:
-                Colore 1
-                Colore 2
-                Colore 3
-            </Label>
-            
-            <ListView x:Name="ListView"/>
+                    <Label Text="MAPPE VACCINI" TextColor="Red" HorizontalOptions="Center" FontSize="30" TextDecorations="Underline" Margin="0, 10, 0, 0"/>
+
+                    <Label x:Name="Legend" TextColor="Black" Margin="10, 0, 10, 0" FontSize="16">
+                        Dalla schermata principale di Mappe Vaccini, puoi selezionare una delle modalità riportate nella parte superiore dello schermo:
+                    </Label>
+
+                    <Image Source="modalita.png" WidthRequest="200" HeightRequest="200" Margin="0, 10, 0, 0"/>
+
+                    <Label Text="Vaccini" TextColor="Red" FontSize="18" Margin="10, 30, 0, 0" FontAttributes="Bold"/>
+
+                    <Label TextColor="Black" Margin="10, 5, 10, 0" FontSize="16">
+                        Nella seguente modalità, viene visualizzata l'Italia suddivisa in regioni, ognuna colorata in base alla quantità di vaccini effettuati sulla popolazione locale (più il colore è scuro, maggiore è il numero di vaccini). Inoltre per ogni regione è presente un PIN, che, se cliccato, mostra il numero di vaccini effettuati in quella determinata regione.
+                    </Label>
+
+                    <Image Source="regionPin.png" WidthRequest="200" HeightRequest="200" Margin="0, 10, 0, 0"/>
+
+                    <Label Text="Covid-19" TextColor="Red" FontSize="18" Margin="10, 30, 0, 0" FontAttributes="Bold"/>
+
+                    <Label TextColor="Black" Margin="10, 5, 10, 0" FontSize="16">
+                        Nella seguente modalità, viene visualizzata l'Italia suddivisa in regioni, ognuna colorata in base alla quantità di positivi presenti nella popolazione locale (più il colore è scuro, maggiore è il numero di positivi). Inoltre per ogni regione è presente un PIN, che, se cliccato, mostra il numero di positivi in quella determinata regione.
+                    </Label>
+
+                    <Image Source="covidPin.png" WidthRequest="200" HeightRequest="200" Margin="0, 10, 0, 0"/>
+
+                    <Label Text="Restrizioni" TextColor="Red" FontSize="18" Margin="10, 30, 0, 0" FontAttributes="Bold"/>
+
+                    <Label TextColor="Black" Margin="10, 5, 10, 0" FontSize="16">
+                        Nella seguente modalità, viene visualizzata l'Italia suddivisa in regioni, ognuna colorata in base alle restrizioni attualmente in atto su di essa (zona bianca, gailla, arancione, rossa). Inoltre per ogni regione è presente un PIN, che, se cliccato, mostra il nome della regione.
+                    </Label>
+
+                    <Image Source="restrizioni.png" WidthRequest="250" HeightRequest="250" Margin="0, 10, 0, 0"/>
+
+                    <Label Text="Barra degli strumenti" TextColor="Red" FontSize="18" Margin="10, 30, 0, 0" FontAttributes="Bold"/>
+
+                    <Label TextColor="Black" Margin="10, 5, 10, 0" FontSize="16">
+                        Per ogni modalità è possibile aprire la barra degli strumenti per accedere a funzionalità aggiuntive, premendo il seguente tasto:
+                    </Label>
+
+                    <Image Source="toolbarButton.png" WidthRequest="100" HeightRequest="150" Margin="0, 10, 0, 0"/>
+
+                    <Image Source="openToolbar.png" WidthRequest="250" HeightRequest="300" Margin="0, 10, 0, 0"/>
+
+                    <Label TextColor="Black" Margin="10, 5, 10, 0" FontSize="16">
+                        In ordine:
+                    </Label>
+                    <Label TextColor="Black" Margin="10, 5, 10, 0" FontSize="16">
+                        Grazie al primo switch, è possibile attivare o disattivare i PIN delle singole regioni.
+                    </Label>
+                    <Label TextColor="Blue" Margin="10, 10, 10, 0" FontSize="16">
+                        (SOLO IN MODALITÀ VACCINI)
+                    </Label>
+                    <Label TextColor="Black" Margin="10, 0, 10, 0" FontSize="16">
+                        Grazie al secondo switch, è possibile visualizzare i centri vaccinali presenti nella tua regione. 
+                    </Label>
+                    <Label TextColor="Black" Margin="10, 10, 10, 50" FontSize="16">
+                        Grazie al terzo switch, è possibile attivare o disattivare la modalità satellite.
+                    </Label>
+
+                    <Label Text="Mappe Vaccini v1.0" TextColor="Gray" FontSize="18" HorizontalTextAlignment="Center" FontAttributes="Bold"/>
+                    <Label Text="Gruppo 4" TextColor="Gray" FontSize="18" HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="10, 0, 0, 0"/>
+                    <Label Text="Daniele Riva" TextColor="Gray" FontSize="16" HorizontalTextAlignment="Center" Margin="10, 0, 0, 0"/>
+                    <Label Text="Ilias Kamal" TextColor="Gray" FontSize="16" HorizontalTextAlignment="Center" Margin="10, 0, 0, 0"/>
+                    <Label Text="Andrea Molteni" TextColor="Gray" FontSize="16" HorizontalTextAlignment="Center" Margin="10, 0, 0, 0"/>
+                    <Label Text="Raien Fredj" TextColor="Gray" FontSize="16" HorizontalTextAlignment="Center" Margin="10, 0, 0, 0"/>
+                    <Label Text="Justin Halder" TextColor="Gray" FontSize="16" HorizontalTextAlignment="Center" Margin="10, 0, 0, 30"/>
+
+                </StackLayout>
+            </ScrollView>
 
             <Button x:Name="CloseInfoButton" StyleId="2" Text="Chiudi" HorizontalOptions="Center" VerticalOptions="End" Margin="0, 0, 0, 10" Clicked="OnCloseInfoPage"/>
 
         </StackLayout>
 
-        <StackLayout x:Name="LoadingStackLayout" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" IsVisible="false" Grid.ColumnSpan="2" 
+        <!--<StackLayout x:Name="LoadingStackLayout" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" IsVisible="false" Grid.ColumnSpan="2" 
                      Grid.RowSpan="3" Orientation="Vertical" x:FieldModifier="public">
 
             <ListView x:Name="ListView2"/>
@@ -118,11 +180,11 @@
             <Label Text="CARICAMENTO" TextColor="Red" FontAttributes="Bold" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Black"
                    Margin="0, 0, 0, 0"/>
 
-        </StackLayout>
+        </StackLayout>-->
 
-            <ActivityIndicator x:Name="LoadingRing" Color="Red" IsRunning="False" IsVisible="true" 
+        <ActivityIndicator x:Name="LoadingRing" Color="Red" IsRunning="False" IsVisible="true" 
                            Grid.Row="2" Grid.Column="0" 
-                           WidthRequest="100" HeightRequest="100"
+                           WidthRequest="150" HeightRequest="150"
                            VerticalOptions="End" Margin="0, 0, 0, 35"/>
 
     </Grid>

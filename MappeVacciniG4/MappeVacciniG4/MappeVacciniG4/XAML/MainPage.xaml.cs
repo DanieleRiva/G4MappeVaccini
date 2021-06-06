@@ -131,13 +131,13 @@ namespace MappeVacciniG4
 
         private async void OnRegions(object sender, EventArgs e)
         {
-            LoadingStackLayout.IsVisible = true;
-
             Map.MapElements.Clear();
             Map.Pins.Clear();
 
-            if (sender == null || ((Button)sender).Text == "Vaccini" && !vaccinesLoaded && LoadingStackLayout.IsVisible == true)
+            if (sender == null || ((Button)sender).Text == "Vaccini" && !vaccinesLoaded)
             {
+                OnOpenToolbar(null, null);
+
                 vaccinesPolygons = await MappeRegioni.InitData(0);
                 vaccinesPinsRegions = await MappeRegioni.GetRegionsPins(0);
 
@@ -153,10 +153,12 @@ namespace MappeVacciniG4
 
                 vaccinesLoaded = true;
 
-                CentersStakPanel.IsVisible = true;
+                //CentersStakPanel.IsVisible = true;
             }
-            else if (((Button)sender).Text == "Vaccini" && vaccinesLoaded && LoadingStackLayout.IsVisible == true)
+            else if (((Button)sender).Text == "Vaccini" && vaccinesLoaded)
             {
+                OnOpenToolbar(null, null);
+
                 foreach (var poly in vaccinesPolygons)
                     Map.MapElements.Add(poly);
 
@@ -167,10 +169,12 @@ namespace MappeVacciniG4
                 if (PinSwitch.IsToggled)
                     OnRegionsPinsToggled(null, null);
 
-                CentersStakPanel.IsVisible = true;
+                //CentersStakPanel.IsVisible = true;
             }
-            else if (((Button)sender).Text == "Covid-19" && !covidLoaded && LoadingStackLayout.IsVisible == true) // Clicked Covid-19
+            else if (((Button)sender).Text == "Covid-19" && !covidLoaded) // Clicked Covid-19
             {
+                OnOpenToolbar(null, null);
+
                 covidPolygons = await MappeRegioni.InitData(1);
                 covidPinRegions = await MappeRegioni.GetRegionsPins(1);
 
@@ -186,10 +190,12 @@ namespace MappeVacciniG4
 
                 covidLoaded = true;
 
-                CentersStakPanel.IsVisible = false;
+                //CentersStakPanel.IsVisible = false;
             }
-            else if (((Button)sender).Text == "Covid-19" && covidLoaded && LoadingStackLayout.IsVisible == true)
+            else if (((Button)sender).Text == "Covid-19" && covidLoaded)
             {
+                OnOpenToolbar(null, null);
+
                 foreach (var poly in covidPolygons)
                     Map.MapElements.Add(poly);
 
@@ -200,10 +206,12 @@ namespace MappeVacciniG4
                 if (PinSwitch.IsToggled)
                     OnRegionsPinsToggled(null, null);
 
-                CentersStakPanel.IsVisible = false;
+                //CentersStakPanel.IsVisible = false;
             }
-            else if (((Button)sender).Text == "Restrizioni" && !restrictionsLoaded && LoadingStackLayout.IsVisible == true) // Clicked restrictions
+            else if (((Button)sender).Text == "Restrizioni" && !restrictionsLoaded) // Clicked restrictions
             {
+                OnOpenToolbar(null, null);
+
                 retrictionsPolygons = await MappeRegioni.InitData(2);
                 restrictionsPinRegions = await MappeRegioni.GetRegionsPins(2);
 
@@ -218,10 +226,12 @@ namespace MappeVacciniG4
                     OnRegionsPinsToggled(null, null);
 
                 restrictionsLoaded = true;
-                CentersStakPanel.IsVisible = false;
+                //CentersStakPanel.IsVisible = false;
             }
-            else if (((Button)sender).Text == "Restrizioni" && restrictionsLoaded && LoadingStackLayout.IsVisible == true)
+            else if (((Button)sender).Text == "Restrizioni" && restrictionsLoaded)
             {
+                OnOpenToolbar(null, null);
+
                 foreach (var poly in retrictionsPolygons)
                     Map.MapElements.Add(poly);
 
@@ -232,10 +242,8 @@ namespace MappeVacciniG4
                 if (PinSwitch.IsToggled)
                     OnRegionsPinsToggled(null, null);
 
-                CentersStakPanel.IsVisible = false;
+                //CentersStakPanel.IsVisible = false;
             }
-
-            LoadingStackLayout.IsVisible = false;
         }
 
         private async void OnStartupGps()
@@ -256,6 +264,37 @@ namespace MappeVacciniG4
             catch (Exception)
             {
                 await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
+            }
+        }
+
+        private void OnOpenToolbar(object sender, EventArgs e)
+        {
+            if (sender != null && buttonToolbar.Source.ToString() == "File: downArrow.png") // open toolbar
+            {
+                buttonToolbar.Source = "upArrow.png";
+
+                PinStackLayout.IsVisible = true;
+
+                if (VacciniButton.TextColor == Color.Red)
+                    CentersStakPanel.IsVisible = true;
+
+                SatelliteStackLayout.IsVisible = true;
+            }
+            else if (sender == null) // close toolbar from other methods
+            {
+                buttonToolbar.Source = "downArrow.png";
+
+                PinStackLayout.IsVisible = false;
+                CentersStakPanel.IsVisible = false;
+                SatelliteStackLayout.IsVisible = false;
+            }
+            else // close toolbar
+            {
+                buttonToolbar.Source = "downArrow.png";
+
+                PinStackLayout.IsVisible = false;
+                CentersStakPanel.IsVisible = false;
+                SatelliteStackLayout.IsVisible = false;
             }
         }
 
