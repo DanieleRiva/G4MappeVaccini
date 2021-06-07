@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MappeVacciniG4.MainPage"
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
-             xmlns:mappa="clr-namespace:CustomRenderer;assembly=CustomRenderer"
              xmlns:mappa1="clr-namespace:MappeVacciniG4.CLASSES">
-
+             <!--xmlns:mappa="clr-namespace:CustomRenderer;assembly=CustomRenderer"-->
+    
     <Grid>
 
         <Grid.RowDefinitions>

@@ -9,7 +9,7 @@ using Android.OS;
 
 namespace MappeVacciniG4.Droid
 {
-    [Activity(Label = "MappeVacciniG4", Icon = "@mipmap/icon", Theme = "@style/MainTheme",
+    [Activity(Label = "Mappe Vaccini G4", Icon = "@drawable/mappeVacciniMainIcon", Theme = "@style/MainTheme",
         MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize,
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
