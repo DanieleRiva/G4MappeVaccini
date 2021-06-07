@@ -251,25 +251,25 @@ namespace MappeVacciniG4.CLASSES
                 {
                     if (JsonRestrizioni.bianca != null)
                     {
-                        if (JsonRestrizioni.bianca.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.bianca.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.bianca.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.bianca.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.bianca.Contains("Provincia autonoma di Trento"))
+                        if (JsonRestrizioni.bianca.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.bianca.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.bianca.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.bianca.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.bianca.Contains("Provincia Autonoma di Trento"))
                             polygon.FillColor = Color.White;
                     }
 
                     if (JsonRestrizioni.gialla != null)
                     {
-                        if (JsonRestrizioni.gialla.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.gialla.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.gialla.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.gialla.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.gialla.Contains("Provincia autonoma di Trento"))
+                        if (JsonRestrizioni.gialla.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.gialla.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.gialla.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.gialla.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.gialla.Contains("Provincia Autonoma di Trento"))
                             polygon.FillColor = Color.Yellow;
                     }
 
                     if (JsonRestrizioni.arancione != null)
                     {
-                        if (JsonRestrizioni.arancione.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.arancione.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.arancione.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.arancione.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.arancione.Contains("Provincia autonoma di Trento"))
+                        if (JsonRestrizioni.arancione.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.arancione.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.arancione.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.arancione.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.arancione.Contains("Provincia Autonoma di Trento"))
                             polygon.FillColor = Color.Orange;
                     }
 
                     if (JsonRestrizioni.rossa != null)
                     {
-                        if (JsonRestrizioni.rossa.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.rossa.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.rossa.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.rossa.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.rossa.Contains("Provincia autonoma di Trento"))
+                        if (JsonRestrizioni.rossa.Contains(res.features[i].properties.reg_name) || res.features[i].properties.reg_name == "Emilia-Romagna" && JsonRestrizioni.rossa.Contains("Emilia Romagna") || res.features[i].properties.reg_name == "Friuli-Venezia Giulia" && JsonRestrizioni.rossa.Contains("Friuli Venezia Giulia") || res.features[i].properties.reg_name == "Valle d'Aosta/Vallée d'Aoste" && JsonRestrizioni.rossa.Contains("Valle d\u2019Aosta") || res.features[i].properties.reg_name == "Trentino-Alto Adige/Südtirol" && JsonRestrizioni.rossa.Contains("Provincia Autonoma di Trento"))
                             polygon.FillColor = Color.Red;
                     }
                 }

@@ -126,7 +126,7 @@
                     <Label Text="Restrizioni" TextColor="Red" FontSize="18" Margin="10, 30, 0, 0" FontAttributes="Bold"/>
 
                     <Label TextColor="Black" Margin="10, 5, 10, 0" FontSize="16">
-                        Nella seguente modalità, viene visualizzata l'Italia suddivisa in regioni, ognuna colorata in base alle restrizioni attualmente in atto su di essa (zona bianca, gailla, arancione, rossa). Inoltre per ogni regione è presente un PIN, che, se cliccato, mostra il nome della regione.
+                        Nella seguente modalità, viene visualizzata l'Italia suddivisa in regioni, ognuna colorata in base alle restrizioni attualmente in atto su di essa (zona bianca, gialla, arancione, rossa). Inoltre per ogni regione è presente un PIN, che, se cliccato, mostra il nome della regione.
                     </Label>
 
                     <Image Source="restrizioni.png" WidthRequest="250" HeightRequest="250" Margin="0, 10, 0, 0"/>
@@ -153,9 +153,14 @@
                     <Label TextColor="Black" Margin="10, 0, 10, 0" FontSize="16">
                         Grazie al secondo switch, è possibile visualizzare i centri vaccinali presenti nella tua regione. 
                     </Label>
-                    <Label TextColor="Black" Margin="10, 10, 10, 50" FontSize="16">
+                    <Label TextColor="Black" Margin="10, 10, 10, 0" FontSize="16">
                         Grazie al terzo switch, è possibile attivare o disattivare la modalità satellite.
                     </Label>
+
+                    <Label TextColor="Black" Margin="10, 20, 10, 0" FontSize="16">
+                        Premendo un qualsiasi PIN, è possibile ottenere le indicazioni stradali per raggiungerlo:
+                    </Label>
+                    <Image Source="indicazioniStradali.png" WidthRequest="250" HeightRequest="250" Margin="0, 10, 0, 50"/>
 
                     <Label Text="Mappe Vaccini v1.0" TextColor="Gray" FontSize="18" HorizontalTextAlignment="Center" FontAttributes="Bold"/>
                     <Label Text="Gruppo 4" TextColor="Gray" FontSize="18" HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="10, 0, 0, 0"/>
