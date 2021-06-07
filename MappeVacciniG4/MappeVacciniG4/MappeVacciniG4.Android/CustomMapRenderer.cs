@@ -22,7 +22,7 @@ namespace MappeVacciniG4.Droid
     public class CustomMapRenderer : MapRenderer/*, GoogleMap.IInfoWindowAdapter*/
     {
         //List<CustomPin> customPins;
-        string[] regions = new string[] { "Piemonte", "Valle d'Aosta / Vallée d'Aoste", "Lombardia", "Trentino Alto Adige", "Veneto", "Friuli-Venezia Giulia", "Liguria", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna" };
+        string[] regions = new string[] { "Piemonte", "Valle d'Aosta / Vallée d'Aoste", "Valle d'Aosta", "Lombardia", "Trentino Alto Adige", "Veneto", "Friuli-Venezia Giulia", "Friuli Venezia Giulia", "Liguria", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna" };
 
         public CustomMapRenderer(Context context) : base(context)
         {
