@@ -4,8 +4,7 @@
              x:Class="MappeVacciniG4.MainPage"
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
              xmlns:mappa1="clr-namespace:MappeVacciniG4.CLASSES">
-             <!--xmlns:mappa="clr-namespace:CustomRenderer;assembly=CustomRenderer"-->
-    
+
     <Grid>
 
         <Grid.RowDefinitions>
@@ -18,20 +17,12 @@
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
 
-        <!--<maps:Map x:Name="Map" IsVisible="true" Grid.ColumnSpan="2" Grid.RowSpan="3" IsShowingUser="True" MapType="Street" x:FieldModifier="public">
-
-        </maps:Map>-->
-
         <mappa1:CustomMap x:Name="Map" IsVisible="true" Grid.ColumnSpan="2" Grid.RowSpan="3" IsShowingUser="True" MapType="Street" x:FieldModifier="public">
 
         </mappa1:CustomMap>
 
         <ImageButton Source="infoIcon.png" BackgroundColor="Transparent" HorizontalOptions="Center" VerticalOptions="Center"
                      Margin="0, 10, 0, 0" Clicked="OnOpenInfoPage" WidthRequest="40" HeightRequest="40"/>
-
-        <!--<SearchBar Grid.Column="1" Placeholder="Cerca un indirizzo..." 
-                   TextColor="Black" PlaceholderColor="Black" 
-                   HorizontalOptions="Center" Margin="0, 10, 20, 0" BackgroundColor="White" />-->
 
         <ScrollView Orientation="Horizontal" Grid.Column="1" Grid.Row="0" HorizontalScrollBarVisibility="Never">
 
@@ -90,12 +81,6 @@
                 <Image Source="mapSatellite" WidthRequest="30" HeightRequest="30" />
                 <Switch HorizontalOptions="Center" OnColor="Green" ThumbColor="White" Toggled="OnSatelliteToggle"/>
             </StackLayout>
-
-            <!--<StackLayout Orientation="Vertical">
-                <Label Text="+" TextColor="Black" Margin="25, 0, 0, 0"/>
-                <Image Source="BlueGradient.png" Rotation="-90" Margin="0, 10, 0, 10"/>
-                <Label Text="-" TextColor="Black" Margin="28, 0, 0, 0"/>
-            </StackLayout>-->
 
         </StackLayout>
 
@@ -157,7 +142,7 @@
                         (SOLO IN MODALITÀ VACCINI)
                     </Label>
                     <Label TextColor="Black" Margin="10, 0, 10, 0" FontSize="16">
-                        Grazie al secondo switch, è possibile visualizzare i centri vaccinali presenti nella tua regione. 
+                        Grazie al secondo switch, è possibile visualizzare i centri vaccinali presenti nella tua regione.
                     </Label>
                     <Label TextColor="Black" Margin="10, 10, 10, 0" FontSize="16">
                         Grazie al terzo switch, è possibile attivare o disattivare la modalità satellite.
@@ -182,16 +167,6 @@
             <Button x:Name="CloseInfoButton" StyleId="2" Text="Chiudi" HorizontalOptions="Center" VerticalOptions="End" Margin="0, 0, 0, 10" Clicked="OnCloseInfoPage"/>
 
         </StackLayout>
-
-        <!--<StackLayout x:Name="LoadingStackLayout" Grid.Row="0" Grid.Column="0" BackgroundColor="Transparent" IsVisible="false" Grid.ColumnSpan="2" 
-                     Grid.RowSpan="3" Orientation="Vertical" x:FieldModifier="public">
-
-            <ListView x:Name="ListView2"/>
-            
-            <Label Text="CARICAMENTO" TextColor="Red" FontAttributes="Bold" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center" BackgroundColor="Black"
-                   Margin="0, 0, 0, 0"/>
-
-        </StackLayout>-->
 
         <ActivityIndicator x:Name="LoadingRing" Color="Red" IsRunning="False" IsVisible="true" 
                            Grid.Row="2" Grid.Column="0" 

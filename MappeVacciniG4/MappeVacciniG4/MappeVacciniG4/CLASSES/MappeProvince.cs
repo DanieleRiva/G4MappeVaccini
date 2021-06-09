@@ -17,8 +17,6 @@ using Xamarin.Forms.Maps;
 
 namespace MappeVacciniG4.CLASSES
 {
-
-   
     class MappeProvince
     {
         public async Task<Polygon[]> InitData()

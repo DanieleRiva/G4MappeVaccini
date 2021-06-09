@@ -4,7 +4,8 @@ using System.Text;
 
 namespace MappeVacciniG4.CLASSES
 {
-    // Regions / province
+    #region // Regions - province //
+
     public class Rootobject
     {
         public string type { get; set; }
@@ -32,7 +33,9 @@ namespace MappeVacciniG4.CLASSES
         public string reg_istat_code { get; set; }
     }
 
-    // Pins Json
+    #endregion
+
+    #region // Pins Json //
     public class PinsJson
     {
         public Schema schema { get; set; }
@@ -65,7 +68,10 @@ namespace MappeVacciniG4.CLASSES
         public string nome_area { get; set; }
     }
 
-    // VacciniSummary latest
+    #endregion
+
+    #region // VacciniSummary latest //
+
     public class RootobjectVacciniSummary
     {
         public SchemaVacciniSummary schema { get; set; }
@@ -99,7 +105,10 @@ namespace MappeVacciniG4.CLASSES
         public string nome_area { get; set; }
     }
 
-    // Restrizioni
+    #endregion
+
+    #region // Restrizioni //
+
     public class Restrizioni
     {
         public string[] bianca { get; set; }
@@ -108,46 +117,9 @@ namespace MappeVacciniG4.CLASSES
         public string[] rossa { get; set; }
     }
 
-    // Json Covid
-    //public class RootobjectCovid
-    //{
-    //    public DatiCovid[] data { get; set; }
-    //}
+    #endregion
 
-    //public class DatiCovid
-    //{
-    //    public DateTime data { get; set; }
-    //    public string stato { get; set; }
-    //    public int codice_regione { get; set; }
-    //    public string denominazione_regione { get; set; }
-    //    public float lat { get; set; }
-    //    public float _long { get; set; }
-    //    public int ricoverati_con_sintomi { get; set; }
-    //    public int terapia_intensiva { get; set; }
-    //    public int totale_ospedalizzati { get; set; }
-    //    public int isolamento_domiciliare { get; set; }
-    //    public int totale_positivi { get; set; }
-    //    public int variazione_totale_positivi { get; set; }
-    //    public int nuovi_positivi { get; set; }
-    //    public int dimessi_guariti { get; set; }
-    //    public int deceduti { get; set; }
-    //    public object casi_da_sospetto_diagnostico { get; set; }
-    //    public object casi_da_screening { get; set; }
-    //    public int totale_casi { get; set; }
-    //    public int tamponi { get; set; }
-    //    public int casi_testati { get; set; }
-    //    public string note { get; set; }
-    //    public int ingressi_terapia_intensiva { get; set; }
-    //    public object note_test { get; set; }
-    //    public string note_casi { get; set; }
-    //    public int totale_positivi_test_molecolare { get; set; }
-    //    public int totale_positivi_test_antigenico_rapido { get; set; }
-    //    public int tamponi_test_molecolare { get; set; }
-    //    public int tamponi_test_antigenico_rapido { get; set; }
-    //    public string codice_nuts_1 { get; set; }
-    //    public string codice_nuts_2 { get; set; }
-    //}
-
+    #region // Json Covid //
 
     public class RootobjectCovid
     {
@@ -200,12 +172,5 @@ namespace MappeVacciniG4.CLASSES
         public string codice_nuts_2 { get; set; }
     }
 
-
-
-
-
-
-    class JsonClass
-    {
-    }
+    #endregion
 }

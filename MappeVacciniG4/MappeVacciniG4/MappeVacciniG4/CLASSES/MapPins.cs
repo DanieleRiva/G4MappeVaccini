@@ -18,10 +18,17 @@ namespace MappeVacciniG4.CLASSES
 {
     public class MapPins
     {
+        #region // VARIABLES //
+
         string[] regions = new string[] { "Piemonte", "Valle d'Aosta / Vallée d'Aoste", "Lombardia", "Trentino Alto Adige", "Veneto", "Friuli-Venezia Giulia", "Liguria", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna" };
 
         static readonly HttpClient client = new HttpClient();
         static string urlGet = "https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/punti-somministrazione-latest.json";
+
+        #endregion
+
+
+        #region // GET PIN DATA //
 
         public async Task<List<Pin>> GetPinData()
         {
@@ -117,6 +124,10 @@ namespace MappeVacciniG4.CLASSES
             }
         }
 
+        #endregion
+
+        #region // GET CURRENT LOCATION
+
         private async Task<Location> GetCurrentLocation()
         {
             try
@@ -149,7 +160,6 @@ namespace MappeVacciniG4.CLASSES
 
         }
 
-        //public System.Threading.Tasks.Task DisplayAlert(string title, string message, string cancel);
-
+        #endregion
     }
 }

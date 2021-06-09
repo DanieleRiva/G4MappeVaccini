@@ -12,11 +12,10 @@ using Xamarin.Forms.Maps;
 
 namespace MappeVacciniG4
 {
-    // 0 = vaccini
-    // 1 = covid
-    // 2 = restrizioni
     public partial class MainPage : ContentPage
     {
+        #region // VARIABLES //
+
         string[] regions = new string[] { "Piemonte", "Valle d'Aosta / Vallée d'Aoste", "Lombardia", "Trentino Alto Adige", "Veneto", "Friuli-Venezia Giulia", "Liguria", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna" };
 
         MappeRegioni MappeRegioni = new MappeRegioni();
@@ -41,17 +40,171 @@ namespace MappeVacciniG4
 
         public Location location;
 
+        #endregion
+
+
+        #region // MAINPAGE //
+
         public MainPage()
         {
             InitializeComponent();
 
-            OnStartupGps();
+            if (CheckConnection())
+            {
+                OnStartupGps();
 
-            Position initPos = new Position(41.90261250766303, 12.496868574122308); // Set initial zoom level
-            Map.MoveToRegion(new MapSpan(initPos, 13, 13));
+                Position initPos = new Position(41.90261250766303, 12.496868574122308); // Set initial zoom level
+                Map.MoveToRegion(new MapSpan(initPos, 13, 13));
 
-            OnRegions(null, null); // Load regions when launching app
+                OnRegions(null, null); // Load regions when launching app
+            }
+            else
+                DisplayAlert("Attenzione", "Non sei connesso ad internet. Connettiti e riprova.", "Ok");
         }
+
+        #endregion
+
+
+        #region // MODES // 
+
+        private async void OnRegions(object sender, EventArgs e)
+        {
+            if (!gettingPositionPins && CheckConnection())
+            {
+                LoadingRing.IsRunning = true;
+
+                if (sender == null || ((Button)sender).Text == "Vaccini" && VacciniButton.TextColor == Color.Black && !vaccinesLoaded)
+                {
+                    Map.MapElements.Clear();
+                    Map.Pins.Clear();
+
+                    OnOpenToolbar(null, null);
+
+                    vaccinesPolygons = await MappeRegioni.InitData(0);
+                    vaccinesPinsRegions = await MappeRegioni.GetRegionsPins(0);
+
+                    await LoadVaccines();
+
+                    VacciniButton.TextColor = Color.Red;
+                    RestrizioniButton.TextColor = Color.Black;
+                    CovidButton.TextColor = Color.Black;
+
+                    if (PinSwitch.IsToggled)
+                        OnRegionsPinsToggled(null, null);
+
+                    vaccinesLoaded = true;
+                }
+                else if (((Button)sender).Text == "Vaccini" && VacciniButton.TextColor == Color.Black && vaccinesLoaded)
+                {
+                    Map.MapElements.Clear();
+                    Map.Pins.Clear();
+
+                    OnOpenToolbar(null, null);
+
+                    await LoadVaccines();
+
+                    VacciniButton.TextColor = Color.Red;
+                    RestrizioniButton.TextColor = Color.Black;
+                    CovidButton.TextColor = Color.Black;
+
+                    if (PinSwitch.IsToggled)
+                        OnRegionsPinsToggled(null, null);
+                }
+                else if (((Button)sender).Text == "Covid-19" && CovidButton.TextColor == Color.Black && !covidLoaded) // Clicked Covid-19
+                {
+                    Map.MapElements.Clear();
+                    Map.Pins.Clear();
+
+                    CentriSwitch.IsToggled = false;
+
+                    OnOpenToolbar(null, null);
+
+                    covidPolygons = await MappeRegioni.InitData(1);
+                    covidPinRegions = await MappeRegioni.GetRegionsPins(1);
+
+                    await LoadCovid();
+
+                    VacciniButton.TextColor = Color.Black;
+                    RestrizioniButton.TextColor = Color.Black;
+                    CovidButton.TextColor = Color.Red;
+
+                    if (PinSwitch.IsToggled)
+                        OnRegionsPinsToggled(null, null);
+
+                    covidLoaded = true;
+                }
+                else if (((Button)sender).Text == "Covid-19" && CovidButton.TextColor == Color.Black && covidLoaded)
+                {
+                    Map.MapElements.Clear();
+                    Map.Pins.Clear();
+
+                    CentriSwitch.IsToggled = false;
+
+                    OnOpenToolbar(null, null);
+
+                    await LoadCovid();
+
+                    VacciniButton.TextColor = Color.Black;
+                    RestrizioniButton.TextColor = Color.Black;
+                    CovidButton.TextColor = Color.Red;
+
+                    if (PinSwitch.IsToggled)
+                        OnRegionsPinsToggled(null, null);
+                }
+                else if (((Button)sender).Text == "Restrizioni" && RestrizioniButton.TextColor == Color.Black && !restrictionsLoaded) // Clicked restrictions
+                {
+                    Map.MapElements.Clear();
+                    Map.Pins.Clear();
+
+                    CentriSwitch.IsToggled = false;
+
+                    OnOpenToolbar(null, null);
+
+                    retrictionsPolygons = await MappeRegioni.InitData(2);
+                    restrictionsPinRegions = await MappeRegioni.GetRegionsPins(2);
+
+                    await LoadRestrictions();
+
+                    VacciniButton.TextColor = Color.Black;
+                    RestrizioniButton.TextColor = Color.Red;
+                    CovidButton.TextColor = Color.Black;
+
+                    if (PinSwitch.IsToggled)
+                        OnRegionsPinsToggled(null, null);
+
+                    restrictionsLoaded = true;
+                }
+                else if (((Button)sender).Text == "Restrizioni" && RestrizioniButton.TextColor == Color.Black && restrictionsLoaded)
+                {
+                    Map.MapElements.Clear();
+                    Map.Pins.Clear();
+
+                    CentriSwitch.IsToggled = false;
+
+                    OnOpenToolbar(null, null);
+
+                    await LoadRestrictions();
+
+                    VacciniButton.TextColor = Color.Black;
+                    RestrizioniButton.TextColor = Color.Red;
+                    CovidButton.TextColor = Color.Black;
+
+                    if (PinSwitch.IsToggled)
+                        OnRegionsPinsToggled(null, null);
+
+                }
+
+                LoadingRing.IsRunning = false;
+            }
+            else if (!CheckConnection())
+                await DisplayAlert("Attenzione", "Non sei connesso ad internet. Connettiti e riprova.", "Ok");
+            else
+                await DisplayAlert("Attenzione", "Per favore, attendi la fine del caricamento dei centri vaccinali nella tua regione.", "Ok");
+        }
+
+        #endregion
+
+        #region // TOOLBAR //
 
         private void OnRegionsPinsToggled(object sender, ToggledEventArgs e)
         {
@@ -69,55 +222,52 @@ namespace MappeVacciniG4
 
         private async void OnPointsToggled(object sender, ToggledEventArgs e)
         {
-            changedByError = false;
-
-            gettingPositionPins = true;
-            //CovidButton.IsEnabled = false;
-            //RestrizioniButton.IsEnabled = false;
-
-            if (CentriSwitch.IsToggled && !pinSwitched)
+            if (CheckConnection())
             {
-                LoadingRing.IsRunning = true;
-                CentriSwitch.IsEnabled = false;
+                changedByError = false;
 
-                pinSomministrazione = await MappaPins.GetPinData();
+                gettingPositionPins = true;
 
-                if (pinSomministrazione == null)
+                if (CentriSwitch.IsToggled && !pinSwitched)
                 {
-                    await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
-                    CentriSwitch.IsToggled = false;
-                    changedByError = true;
+                    LoadingRing.IsRunning = true;
+                    CentriSwitch.IsEnabled = false;
+
+                    pinSomministrazione = await MappaPins.GetPinData();
+
+                    if (pinSomministrazione == null)
+                    {
+                        await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
+                        CentriSwitch.IsToggled = false;
+                        changedByError = true;
+                    }
+                    else
+                    {
+                        pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
+                        pinSwitched = true;
+                    }
+
+                    CentriSwitch.IsEnabled = true;
                 }
-                else
+                else if (CentriSwitch.IsToggled && pinSwitched) // Prevents from loading more than once
                 {
+                    LoadingRing.IsRunning = true;
+
+                    await LoadPins(true);
+
                     pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
-                    pinSwitched = true;
+                }
+                else if (!changedByError)
+                {
+                    await LoadPins(true);
                 }
 
-                CentriSwitch.IsEnabled = true;
+                gettingPositionPins = false;
+
+                LoadingRing.IsRunning = false;
             }
-            else if (CentriSwitch.IsToggled && pinSwitched) // Prevents from loading more than once
-            {
-                LoadingRing.IsRunning = true;
-
-                foreach (var pin in Map.Pins.ToList())
-                    if (!regions.Contains(pin.Label))
-                        Map.Pins.Remove(pin);
-
-                pinSomministrazione.ForEach(pin => Map.Pins.Add(pin));
-            }
-            else if (!changedByError)
-            {
-                foreach (var pin in Map.Pins.ToList())
-                    if (!regions.Contains(pin.Label))
-                        Map.Pins.Remove(pin);
-            }
-
-            gettingPositionPins = false;
-            //CovidButton.IsEnabled = true;
-            //RestrizioniButton.IsEnabled = true;
-
-            LoadingRing.IsRunning = false;
+            else
+                await DisplayAlert("Attenzione", "Non sei connesso ad internet. Connettiti e riprova.", "Ok");
         }
 
         private void OnSatelliteToggle(object sender, ToggledEventArgs e)
@@ -136,174 +286,6 @@ namespace MappeVacciniG4
         private void OnCloseInfoPage(object sender, EventArgs e)
         {
             InfoStackLayout.IsVisible = false;
-        }
-
-        private async void OnRegions(object sender, EventArgs e)
-        {
-            if (!gettingPositionPins)
-            {
-                if (sender == null || ((Button)sender).Text == "Vaccini" && VacciniButton.TextColor == Color.Black && !vaccinesLoaded)
-                {
-                    Map.MapElements.Clear();
-                    Map.Pins.Clear();
-
-                    OnOpenToolbar(null, null);
-
-                    vaccinesPolygons = await MappeRegioni.InitData(0);
-                    vaccinesPinsRegions = await MappeRegioni.GetRegionsPins(0);
-
-                    foreach (var poly in vaccinesPolygons)
-                        Map.MapElements.Add(poly);
-
-                    VacciniButton.TextColor = Color.Red;
-                    RestrizioniButton.TextColor = Color.Black;
-                    CovidButton.TextColor = Color.Black;
-
-                    if (PinSwitch.IsToggled)
-                        OnRegionsPinsToggled(null, null);
-
-                    vaccinesLoaded = true;
-
-                    //CentersStakPanel.IsVisible = true;
-                }
-                else if (((Button)sender).Text == "Vaccini" && VacciniButton.TextColor == Color.Black && vaccinesLoaded)
-                {
-                    Map.MapElements.Clear();
-                    Map.Pins.Clear();
-
-                    OnOpenToolbar(null, null);
-
-                    foreach (var poly in vaccinesPolygons)
-                        Map.MapElements.Add(poly);
-
-                    VacciniButton.TextColor = Color.Red;
-                    RestrizioniButton.TextColor = Color.Black;
-                    CovidButton.TextColor = Color.Black;
-
-                    if (PinSwitch.IsToggled)
-                        OnRegionsPinsToggled(null, null);
-
-                    //CentersStakPanel.IsVisible = true;
-                }
-                else if (((Button)sender).Text == "Covid-19" && CovidButton.TextColor == Color.Black && !covidLoaded) // Clicked Covid-19
-                {
-                    Map.MapElements.Clear();
-                    Map.Pins.Clear();
-
-                    CentriSwitch.IsToggled = false;
-
-                    OnOpenToolbar(null, null);
-
-                    covidPolygons = await MappeRegioni.InitData(1);
-                    covidPinRegions = await MappeRegioni.GetRegionsPins(1);
-
-                    foreach (var poly in covidPolygons)
-                        Map.MapElements.Add(poly);
-
-                    VacciniButton.TextColor = Color.Black;
-                    RestrizioniButton.TextColor = Color.Black;
-                    CovidButton.TextColor = Color.Red;
-
-                    if (PinSwitch.IsToggled)
-                        OnRegionsPinsToggled(null, null);
-
-                    covidLoaded = true;
-
-                    //CentersStakPanel.IsVisible = false;
-                }
-                else if (((Button)sender).Text == "Covid-19" && CovidButton.TextColor == Color.Black && covidLoaded)
-                {
-                    Map.MapElements.Clear();
-                    Map.Pins.Clear();
-
-                    CentriSwitch.IsToggled = false;
-
-                    OnOpenToolbar(null, null);
-
-                    foreach (var poly in covidPolygons)
-                        Map.MapElements.Add(poly);
-
-                    VacciniButton.TextColor = Color.Black;
-                    RestrizioniButton.TextColor = Color.Black;
-                    CovidButton.TextColor = Color.Red;
-
-                    if (PinSwitch.IsToggled)
-                        OnRegionsPinsToggled(null, null);
-
-                    //CentersStakPanel.IsVisible = false;
-                }
-                else if (((Button)sender).Text == "Restrizioni" && RestrizioniButton.TextColor == Color.Black && !restrictionsLoaded) // Clicked restrictions
-                {
-                    Map.MapElements.Clear();
-                    Map.Pins.Clear();
-
-                    CentriSwitch.IsToggled = false;
-
-                    OnOpenToolbar(null, null);
-
-                    retrictionsPolygons = await MappeRegioni.InitData(2);
-                    restrictionsPinRegions = await MappeRegioni.GetRegionsPins(2);
-
-                    foreach (var poly in retrictionsPolygons)
-                        Map.MapElements.Add(poly);
-
-                    VacciniButton.TextColor = Color.Black;
-                    RestrizioniButton.TextColor = Color.Red;
-                    CovidButton.TextColor = Color.Black;
-
-                    if (PinSwitch.IsToggled)
-                        OnRegionsPinsToggled(null, null);
-
-                    restrictionsLoaded = true;
-                    //CentersStakPanel.IsVisible = false;
-                }
-                else if (((Button)sender).Text == "Restrizioni" && RestrizioniButton.TextColor == Color.Black && restrictionsLoaded)
-                {
-                    Map.MapElements.Clear();
-                    Map.Pins.Clear();
-
-                    CentriSwitch.IsToggled = false;
-
-                    OnOpenToolbar(null, null);
-
-                    foreach (var poly in retrictionsPolygons)
-                        Map.MapElements.Add(poly);
-
-                    VacciniButton.TextColor = Color.Black;
-                    RestrizioniButton.TextColor = Color.Red;
-                    CovidButton.TextColor = Color.Black;
-
-                    if (PinSwitch.IsToggled)
-                        OnRegionsPinsToggled(null, null);
-
-                    //CentersStakPanel.IsVisible = false;
-                }
-            }
-            else
-            {
-                await DisplayAlert("Attenzione", "Per favore, attendi la fine del caricamento dei centri vaccinali nella tua regione.", "Ok");
-            }
-        }
-
-        private async void OnStartupGps()
-        {
-            try
-            {
-                location = await Geolocation.GetLastKnownLocationAsync();
-
-                if (location == null)
-                {
-                    var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
-                    location = await Geolocation.GetLocationAsync(request);
-
-                    if (location == null)
-                        await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
-                }
-            }
-            catch (Exception)
-            {
-                await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
-            }
         }
 
         private void OnOpenToolbar(object sender, EventArgs e)
@@ -337,62 +319,99 @@ namespace MappeVacciniG4
             }
         }
 
-        //private void OnRestrictions(object sender, EventArgs e)
-        //{
-        //    //MappeRegioni.InitData(true);
-        //}
+        #endregion
 
-        //private async void OnCovid(object sender, EventArgs e)
-        //{
-        //    Map.MapElements.Clear();
-        //    Map.Pins.Clear();
+        #region // MISCELLANEOUS //
 
-        //    if (CovidButton.TextColor == Color.Black && !regionsLoaded)
-        //    {
-        //        regionsPolygons = await MappeRegioni.InitData(1);
-        //        regionsPin = await MappeRegioni.GetRegionsPins(false);
+        // 0 = vaccini
+        // 1 = covid
+        // 2 = restrizioni
 
-        //        foreach (var poly in regionsPolygons)
-        //            Map.MapElements.Add(poly);
+        private bool CheckConnection()
+        {
+            var current = Connectivity.NetworkAccess;
+            if (current == NetworkAccess.Internet)
+                return true;
+            else
+                return false;
+        }
 
-        //        regionsPin.ForEach(pin => Map.Pins.Add(pin));
+        private async void OnStartupGps()
+        {
+            try
+            {
+                location = await Geolocation.GetLastKnownLocationAsync();
 
-        //        RegionsButton.TextColor = Color.Black;
-        //        RestrizioniButton.TextColor = Color.Black;
-        //        //ProvinceButton.TextColor = Color.Black;
-        //        CovidButton.TextColor = Color.Red;
-        //    }
-        //}
+                if (location == null)
+                {
+                    var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
+                    location = await Geolocation.GetLocationAsync(request);
 
-        //private async void OnProvince(object sender, EventArgs e)
-        //{
-        //    if (ProvinceButton.TextColor == Color.Black && !provinceLoaded)
-        //    {
-        //        //LoadingRing.IsRunning = true;
+                    if (location == null)
+                        await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
+                }
+            }
+            catch (Exception)
+            {
+                await DisplayAlert("Attenzione", "Non è stato possibile rilevare la tua posizione.", "Ok");
+            }
+        }
 
-        //        Map.MapElements.Clear();
-        //        provincePolygons = await MappeProvince.InitData();
-        //        foreach (var poly in provincePolygons)
-        //            Map.MapElements.Add(poly);
+        // load - remove //
 
-        //        ProvinceButton.TextColor = Color.Red;
-        //        RegionsButton.TextColor = Color.Black;
+        private async Task<bool> LoadVaccines()
+        {
+            await Task.Run(() =>
+            {
+                foreach (var poly in vaccinesPolygons)
+                    Map.MapElements.Add(poly);
+            });
 
-        //        //provinceLoaded = true;
-        //    }
-        //    else if (ProvinceButton.TextColor == Color.Black && provinceLoaded)
-        //    {
-        //        //LoadingRing.IsRunning = true;
-        //        Map.MapElements.Clear();
+            return true;
+        }
+        private async Task<bool> LoadCovid()
+        {
+            await Task.Run(() =>
+            {
+                foreach (var poly in covidPolygons)
+                    Map.MapElements.Add(poly);
+            });
 
-        //        foreach (var poly in provincePolygons)
-        //            Map.MapElements.Add(poly);
+            return true;
+        }
+        private async Task<bool> LoadRestrictions()
+        {
+            await Task.Run(() =>
+            {
+                foreach (var poly in retrictionsPolygons)
+                    Map.MapElements.Add(poly);
+            });
 
-        //        ProvinceButton.TextColor = Color.Red;
-        //        RegionsButton.TextColor = Color.Black;
-        //    }
+            return true;
+        }
 
-        //    LoadingRing.IsRunning = false;
-        //}
+
+        private async Task<bool> LoadPins(bool load)
+        {
+            if (load) // Load pins
+                await Task.Run(() =>
+                {
+                    foreach (var pin in Map.Pins.ToList())
+                        if (!regions.Contains(pin.Label))
+                            Map.Pins.Remove(pin);
+                });
+
+            if (!load) // Remove pins
+                await Task.Run(() =>
+                {
+                    foreach (var pin in Map.Pins.ToList())
+                        if (!regions.Contains(pin.Label))
+                            Map.Pins.Remove(pin);
+                });
+
+            return true;
+        }
+
+        #endregion
     }
 }

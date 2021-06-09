@@ -16,9 +16,10 @@ using Xamarin.Forms.Maps;
 
 namespace MappeVacciniG4.CLASSES
 {
-    // Main execution
     public class MappeRegioni
     {
+        #region // VARIABLES //
+
         string[] regions = new string[] { "Piemonte", "Valle d'Aosta", "Lombardia", "Trentino", "Veneto", "Friuli", "Liguria", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Puglia", "Basilicata", "Calabria", "Sicilia", "Sardegna" };
         public float[] popolazione = { 4356000, 125666, 10060000, 1072000, 4906000, 1215000, 1551000, 4459000, 3730000, 882015, 1525000, 5879000, 1312000, 305617, 5802000, 4029000, 562869, 1947000, 5000000, 1640000 };
         static readonly HttpClient client = new HttpClient();
@@ -33,6 +34,11 @@ namespace MappeVacciniG4.CLASSES
         float c = 0;
         string restrizioniDati = string.Empty;
         string covidDati = string.Empty;
+
+        #endregion
+
+
+        #region // INITDATA //
 
         public async Task<Polygon[]> InitData(int tipologia)
         {
@@ -304,7 +310,11 @@ namespace MappeVacciniG4.CLASSES
             return regionsPoly;
         }
 
-        public async Task<List<Pin>> GetRegionsPins(int tipologia) // ANCORA DA METTERE MODALITA' COVID-19 (AL MOMENTO SOLO VACCINI)
+        #endregion
+
+        #region // GETREGIONSPINS //
+
+        public async Task<List<Pin>> GetRegionsPins(int tipologia)
         {
             int trenitinoVacc = 0;
             int trentinoPositivi = 0;
@@ -398,5 +408,7 @@ namespace MappeVacciniG4.CLASSES
 
             return pins;
         }
+
+        #endregion
     }
 }
